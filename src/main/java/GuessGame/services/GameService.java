@@ -11,6 +11,8 @@ public class GameService {
 
     private final ConcurrentHashMap<String, GameSession> games = new ConcurrentHashMap<>();
 
+    // For generating game token
+
     public String startNewGame() {
         String gameId = UUID.randomUUID().toString();
         games.put(gameId,new GameSession());
