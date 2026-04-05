@@ -4,11 +4,32 @@ A REST API game built with Spring Boot. The server picks a random number between
 
 ## Running
 
+### With Docker (PostgreSQL)
+
+Start the database first:
+
+```bash
+docker-compose up -d
+```
+
+Then run the application:
+
 ```bash
 ./gradlew bootRun
 ```
 
 The server starts at `http://localhost:8080`.
+
+### Database
+
+Game sessions are now persisted in a PostgreSQL database. The schema is managed automatically by Hibernate (`ddl-auto=update`).
+
+| Setting  | Value                                       |
+|----------|---------------------------------------------|
+| URL      | `jdbc:postgresql://localhost:5433/guessdb`  |
+| Database | `guessdb`                                   |
+| User     | `guess`                                     |
+| Password | `guess`                                     |
 
 ## How to Play
 
@@ -55,3 +76,5 @@ GET http://localhost:8080/game/550e8400-.../guess/62
 - REST API (Spring Web)
 - Gradle
 - Lombok
+- PostgreSQL + Spring Data JPA (Hibernate)
+- Docker / Docker Compose

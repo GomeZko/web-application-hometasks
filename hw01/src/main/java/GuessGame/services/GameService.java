@@ -1,28 +1,31 @@
 package GuessGame.services;
 
 import GuessGame.models.GameSession;
+import GuessGame.repositories.GameSessionRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GameService {
 
-    private final ConcurrentHashMap<String, GameSession> games = new ConcurrentHashMap<>();
+    private final GameSessionRepository repository;
 
-    // For generating game token
+    public GameService(GameSessionRepository repository) {
+        this.repository = repository;
+    }
 
     public String startNewGame() {
-        String gameId = UUID.randomUUID().toString();
-        games.put(gameId,new GameSession());
-        return gameId;
+        GameSession session = new GameSession();
+        session.setId(UUID.randomUUID().toString());
+        repository.save(session);
+        return session.getId();
     }
 
     public String makeGuess(String gameId, int number) {
-        GameSession session = games.get(gameId);
+        GameSession session = repository.findById(gameId).orElse(null);
 
-        if (session == null) {
+        if (session == null || session.isCompleted()) {
             return "Game not found! Start a new game at /game path.";
         }
 
@@ -30,13 +33,15 @@ public class GameService {
         int target = session.getTargetNumber();
 
         if (number > target) {
+            repository.save(session);
             return "Number is smaller!";
         } else if (number < target) {
+            repository.save(session);
             return "Number is bigger!";
         } else {
-            int totalAttemps = session.getAttempts();
-            games.remove(gameId);
-            return "Correct! It took you: " + totalAttemps + " times!";
+            session.setCompleted(true);
+            repository.save(session);
+            return "Correct! It took you: " + session.getAttempts() + " times!";
         }
     }
 }
