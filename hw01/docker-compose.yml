@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: guessdb
+    environment:
+      POSTGRES_DB: guessdb
+      POSTGRES_USER: guess
+      POSTGRES_PASSWORD: guess
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
